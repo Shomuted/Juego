@@ -1,0 +1,54 @@
+THE LAST PHYSICAL STORE — AUDITORÍA 00 + SPRINT 01
+Fecha: 2026-10-10
+Archivo revisado: The_Last_Physical_Store.rar
+
+ESTADO VERIFICADO EN ARCHIVOS
+- Escena principal: node_3d.tscn.
+- Personaje FPS y raycast: Scripts/Player.gd.
+- Catálogo de 12 títulos en 6 plataformas: Scripts/catalogo_juegos.gd.
+- 1 generador activo en escena: GeneradorJuegos.
+- 3 estanterías PS1, PS2 y N64 de capacidad 30 cada una.
+- HUD con inventario y contadores: Scripts/HudTienda.gd.
+- Cada copia contempla id_juego, id_copia, condicion y es_especial.
+- Inventario en memoria, limitado a 5 copias.
+- No se encontraron guardado/carga, objetivos por título ni economía.
+
+PROBLEMAS IDENTIFICADOS EN ESTA VERSIÓN
+P1. Player.gd eliminaba cajas directamente en vez de CajaJuego.recoger().
+P1. El generador podía producir SNES, GameCube y Xbox sin estanterías compatibles.
+P2. El color se regeneraba al exhibir una caja; no respetaba el aspecto anterior.
+P2. El tamaño de la caja libre (0.65, 0.9, 0.12) difería del de exhibición
+    (0.29, 0.57, 0.13), con cambios evidentes al almacenarla.
+P1. No existe persistencia; la partida vuelve a generar copias al comenzar.
+P2. La estructura de colecciones por título todavía no existe.
+P2. La configuración del proyecto declara características 4.7, pero
+    INSTRUCCIONES.txt indicaba 4.3+; verificar compatibilidad del Godot instalado.
+
+CAMBIOS APLICADOS EN EL SPRINT 01
+- Player.gd ahora usa CajaJuego.recoger() y sus validaciones.
+- Generación por defecto limitada a consolas con estantería.
+- Paleta provisional por consola compartida entre caja física y exhibida.
+- Dimensiones iniciales coherentes en malla, colisión y estantería.
+- INSTRUCCIONES.txt actualizado.
+
+LIMITACIONES Y SIGUIENTE SPRINT
+- No se ha ejecutado el juego en Godot, porque el ejecutable no está
+  disponible aquí. Las comprobaciones realizadas son estáticas.
+- La paleta por consola es provisional; las portadas individuales y los
+  formatos físicos por consola siguen pendientes.
+- No se añadieron ni guardados ni colecciones, deliberadamente.
+- El siguiente sprint construirá el registro persistente de copias y
+  pruebas de conservación del estado (bodega -> inventario -> estantería).
+- Validar el proyecto en Godot antes de seguir y compartir errores
+  de la pestaña Debugger / Output si los hay.
+
+VERIFICACIONES ESTÁTICAS
+OK: Escena contiene 3 estanterías
+OK: Solo un generador en escena
+OK: Recogida usa validación CajaJuego.recoger()
+OK: No se borra caja directamente desde Player
+OK: Generator filtra consolas
+OK: Paleta consistente en caja y estantería
+OK: Malla y colisión idénticas en la caja
+OK: Escena de caja referencia script existente
+OK: No hay carpetas de caché Godot en entregable

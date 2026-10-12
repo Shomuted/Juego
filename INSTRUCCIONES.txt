@@ -1,0 +1,2 @@
+Este es el Sprint 02 de The Last Physical Store.
+Lee SPRINT_02_INSTRUCCIONES.txt para los cambios, controles y pruebas.

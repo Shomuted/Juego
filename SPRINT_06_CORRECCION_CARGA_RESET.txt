@@ -1,0 +1,51 @@
+THE LAST PHYSICAL STORE - SPRINT 06: CORRECCIÓN DE CARGA Y REINICIO
+
+Se trabajó sobre Sprint 05. Los scripts físicos de las cajas, el generador, las escenas
+y las estanterías son idénticos a los del Sprint 05.
+
+CAUSA Y CAMBIO
+1. F8 es un atajo del editor Godot para DETENER la ejecución. Ya no se usa para borrar
+   partidas. Ahora se abre un menú dentro del juego pulsando TAB.
+2. F9 antes llamaba a cargar_partida() sobre la escena activa, eliminando y recreando
+   objetos físicos mientras el juego estaba en marcha.
+   Ahora se valida el guardado y se recarga la escena de forma diferida.
+   La partida se reconstruye durante la inicialización de la nueva escena.
+3. Las operaciones de cargar/reiniciar suspenden temporalmente los autoguardados para
+   impedir que los datos eliminados o una sesión antigua se escriban otra vez.
+
+CONTROLES
+TAB  - Abrir/cerrar menú de pruebas. Se libera el ratón para utilizar los botones.
+F6   - Guardar partida (también disponible como botón).
+F9   - Cargar último guardado (también disponible como botón).
+ESC  - Cerrar el menú de pruebas o liberar el cursor cuando el menú no está abierto.
+
+REINICIAR PARTIDA
+1. Abrir el juego y pulsar TAB.
+2. Pulsar "Reiniciar prueba - borrar progreso".
+3. Confirmar en el diálogo de seguridad.
+4. Se eliminan partida_01.json, partida_01.bak y partida_01.tmp, y se recarga la escena.
+5. El generador crea el lote inicial nuevo. No hay que eliminar archivos a mano.
+
+PRUEBAS RECOMENDADAS
+1. Recoger una caja y colocarla en su estantería correspondiente.
+2. Abrir TAB -> Guardar partida -> Continuar jugando.
+3. Moverse, recoger otra caja sin guardarla.
+4. Abrir TAB -> Cargar partida. Debe volver a la posición y estado del paso 2.
+5. Abrir TAB -> Reiniciar prueba -> Cancelar. La partida debe continuar intacta.
+6. Abrir TAB -> Reiniciar prueba -> Confirmar. Debe aparecer una partida nueva.
+7. Cerrar el juego y volver a abrirlo; verificar que ninguna copia se duplica.
+8. Verificar que las formas/tamaños/masas de PS1, PS2 y N64 son iguales al Sprint 05.
+
+PRECAUCIÓN
+El botón de reinicio elimina el progreso de prueba permanentemente. Haz una copia de
+la partida antes si necesitas conservarla.
+
+VERIFICACIÓN
+Se ha comprobado estáticamente la integridad y las referencias de los scripts,
+así como la invariancia de la física y las estanterías respecto al Sprint 05.
+No fue posible ejecutar Godot en este entorno; se requiere validación F5 en Godot.
+
+ARCHIVOS MODIFICADOS
+Scripts/Main.gd
+Scripts/SaveManager.gd
+Scripts/HudTienda.gd

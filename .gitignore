@@ -1,0 +1,12 @@
+# Godot: generated editor/import cache
+.godot/
+# Python tools
+__pycache__/
+*.py[cod]
+# Local exports and diagnostics
+exports/
+*.log
+.DS_Store
+# Imported project rules
+# Godot 4+ specific ignores
+/android/

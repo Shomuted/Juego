@@ -1,0 +1,66 @@
+THE LAST PHYSICAL STORE — SPRINT 02
+ESTANTERÍAS DE COLECCIONES CON POSICIONES FIJAS
+
+REQUISITOS
+- Godot 4 compatible con project.godot.
+- Importar project.godot de este directorio.
+- Esta carpeta conserva la base del Sprint 01.
+
+QUÉ CAMBIÓ
+- Cada estantería tiene 3 filas físicas y 10 columnas por fila (30 posiciones).
+- Cada fila pertenece a un único id_juego.
+- PS1: fila 1 ff7_ps1, fila 2 mgs_ps1, fila 3 sin asignar.
+- PS2: fila 1 gt4_ps2, fila 2 sh2_ps2, fila 3 sin asignar.
+- N64: fila 1 mario64_n64, fila 2 zeldaoot_n64, fila 3 sin asignar.
+- Las posiciones se llenan de izquierda a derecha y nunca se reordenan al recibir otro título.
+- Las filas no configuradas se asignan al primer título válido que reciben.
+- Al colocar una copia nueva, el juego conserva su id_copia, condición y edición.
+- Una colección no admite más de 10 copias; otra colección no invade su fila.
+- La estantería rechaza copias sin identificador y duplicados locales.
+- E intenta ordenar una copia posterior si la primera compatible tiene la fila completa.
+- Hay rótulos por fila que indican título y progreso.
+- Al completar 10/10 aparece un mensaje y se emite la señal coleccion_completada.
+- Se puede consultar cantidad_de_copias, coleccion_esta_completa,
+  promedio_condicion (escala 0.0 a 10.0) y obtener_copia_en_posicion.
+- El tercer nivel de cada estantería conserva sus 10 posiciones, pero aún no
+  existe un tercer título de esas consolas en el catálogo de prueba.
+
+CONFIGURACIÓN EN EL EDITOR
+Selecciona Estanterias/EstanteriaPS1 (o PS2 o N64) en node_3d.tscn.
+En el Inspector, 'Ids Por Fila' define qué id_juego pertenece a cada fila.
+Deja una entrada vacía para que la fila se asigne automáticamente.
+Los IDs deben existir en Scripts/catalogo_juegos.gd y ser de la misma consola.
+No cambies esta configuración a mitad de una partida persistente (el guardado
+aún no está implementado). La capacidad física se mantiene en 30.
+
+CONTROLES
+WASD: mover
+Ratón: mirar
+Espacio: saltar
+Clic izquierdo: recoger una copia
+E: colocar una copia en la estantería de su consola
+ESC: liberar el ratón
+
+PRUEBAS RECOMENDADAS
+1. Recoge varias copias de un título. Guárdalas consecutivamente.
+2. Comprueba que se colocan en columnas 1, 2, 3 ... de la misma fila.
+3. Agrega otro título de esa consola. Debe usar su propia fila.
+4. Sigue agregando el primer título: sus primeras copias no deben moverse.
+5. Repite con otras consolas: no mezclar colecciones ni colores.
+6. Usa el script de pruebas si tienes Godot instalado:
+
+   godot --headless --path . --script res://Tests/test_estanteria.gd
+
+LIMITACIONES DEL SPRINT 02
+- No hay guardado/carga: las posiciones y asignaciones dinámicas
+  existen solo durante esa ejecución.
+- No hay reemplazos por calidad, raridades por categoría ni archivo físico.
+- No hay economía, XP ni museo completo.
+- La cantidad inicial generada es 10 copias aleatorias; no garantiza
+  completar una colección sin aumentar temporalmente esa cantidad.
+- Las carátulas ficticias no están implementadas todavía.
+
+ESTADO DE VALIDACIÓN
+Los archivos fueron revisados y se ejecutaron verificaciones estructurales
+en Python, pero no se pudo ejecutar Godot en este entorno.
+Valida las nuevas interacciones en el editor antes de integrar más módulos.

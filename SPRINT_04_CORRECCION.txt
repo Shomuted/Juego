@@ -1,0 +1,35 @@
+THE LAST PHYSICAL STORE - SPRINT 04 CORREGIDO
+
+Base: Sprint 03 (guardado y carga confirmado por el usuario).
+
+CORRECCIÓN PRINCIPAL
+- Se conserva CatalogoJuegos.obtener_juego(), tal como existe en el proyecto.
+- Se descarta el reemplazo completo de estanteria_juegos.gd de la versión 04 anterior.
+- Conservadas todas las funciones, señales y reglas de las estanterías del Sprint 03.
+- Solo cambia su función _mostrar_copia() para dibujar la caja correcta.
+
+NUEVO
+- PS1: estuche vertical, delgado, gris.
+- PS2: estuche vertical azul y más profundo.
+- N64: caja de cartón más baja y ancha, con material menos brillante.
+- PS3: formato oscuro preparado para contenido futuro; NO se genera sin catálogo y estantería.
+- Portada provisional: panel frontal de color estable por título, nombre abreviado y banda de consola.
+- Forma y colisión de cada caja coinciden; el visual en estantería usa el mismo constructor.
+- Se respeta el ancho de las ranuras: ninguna caja supera los 0.37 m entre centros.
+- Los guardados anteriores siguen usando los mismos campos de datos. No hay migración.
+
+VALIDACIÓN RECOMENDADA
+1. Descomprime en carpeta nueva y abre project.godot.
+2. Confirma que los scripts no muestran errores de análisis.
+3. Pulsa F5: recoge una caja y colócala en su estantería.
+4. Comprueba que mantiene el formato, color, título e id_copia.
+5. Pulsa F6, cierra, reinicia y verifica la posición guardada.
+6. Verifica que un título de otra plataforma sigue siendo rechazado.
+7. En una terminal con Godot 4 disponible, ejecutar:
+   godot --headless --path . --script res://Tests/test_formatos.gd
+   godot --headless --path . --script res://Tests/test_estanteria.gd
+   godot --headless --path . --script res://Tests/test_guardado.gd
+
+PRUEBAS EN ESTE ENTORNO
+- Revisiones estáticas y comparación con Sprint 03.
+- No fue posible ejecutar Godot (motor no instalado en el entorno).

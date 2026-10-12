@@ -1,0 +1,213 @@
+{
+  "catalog_version": "0.1-prototipo",
+  "titles": [
+    {
+      "title_id": 1,
+      "code": "ff7_ps1",
+      "name": "Final Fantasy VII",
+      "platform_code": "PS1",
+      "is_active": 1
+    },
+    {
+      "title_id": 2,
+      "code": "mgs_ps1",
+      "name": "Metal Gear Solid",
+      "platform_code": "PS1",
+      "is_active": 1
+    },
+    {
+      "title_id": 3,
+      "code": "gt4_ps2",
+      "name": "Gran Turismo 4",
+      "platform_code": "PS2",
+      "is_active": 1
+    },
+    {
+      "title_id": 4,
+      "code": "sh2_ps2",
+      "name": "Silent Hill 2",
+      "platform_code": "PS2",
+      "is_active": 1
+    },
+    {
+      "title_id": 5,
+      "code": "mario64_n64",
+      "name": "Super Mario 64",
+      "platform_code": "N64",
+      "is_active": 1
+    },
+    {
+      "title_id": 6,
+      "code": "zeldaoot_n64",
+      "name": "The Legend of Zelda: Ocarina of Time",
+      "platform_code": "N64",
+      "is_active": 1
+    },
+    {
+      "title_id": 7,
+      "code": "smw_snes",
+      "name": "Super Mario World",
+      "platform_code": "SNES",
+      "is_active": 1
+    },
+    {
+      "title_id": 8,
+      "code": "supermetroid_snes",
+      "name": "Super Metroid",
+      "platform_code": "SNES",
+      "is_active": 1
+    },
+    {
+      "title_id": 9,
+      "code": "sunshine_gc",
+      "name": "Super Mario Sunshine",
+      "platform_code": "GameCube",
+      "is_active": 1
+    },
+    {
+      "title_id": 10,
+      "code": "windwaker_gc",
+      "name": "The Legend of Zelda: The Wind Waker",
+      "platform_code": "GameCube",
+      "is_active": 1
+    },
+    {
+      "title_id": 11,
+      "code": "halo_xbox",
+      "name": "Halo: Combat Evolved",
+      "platform_code": "Xbox",
+      "is_active": 1
+    },
+    {
+      "title_id": 12,
+      "code": "fable_xbox",
+      "name": "Fable",
+      "platform_code": "Xbox",
+      "is_active": 1
+    }
+  ],
+  "physical_formats": [
+    {
+      "platform_code": "PS1",
+      "format_code": "JEWEL",
+      "width_mm": 142.0,
+      "height_mm": 125.0,
+      "depth_mm": 10.0,
+      "mass_g": 115.0,
+      "friction": 0.55,
+      "restitution": 0.06,
+      "model_key": "ps1_jewel",
+      "is_default": 1
+    },
+    {
+      "platform_code": "PS2",
+      "format_code": "DVD_BLUE",
+      "width_mm": 135.0,
+      "height_mm": 190.0,
+      "depth_mm": 14.0,
+      "mass_g": 135.0,
+      "friction": 0.6,
+      "restitution": 0.08,
+      "model_key": "ps2_dvd",
+      "is_default": 1
+    },
+    {
+      "platform_code": "N64",
+      "format_code": "CARDBOARD",
+      "width_mm": 135.0,
+      "height_mm": 190.0,
+      "depth_mm": 38.0,
+      "mass_g": 185.0,
+      "friction": 0.85,
+      "restitution": 0.02,
+      "model_key": "n64_cardboard",
+      "is_default": 1
+    },
+    {
+      "platform_code": "SNES",
+      "format_code": "CARDBOARD",
+      "width_mm": 135.0,
+      "height_mm": 185.0,
+      "depth_mm": 35.0,
+      "mass_g": 175.0,
+      "friction": 0.8,
+      "restitution": 0.02,
+      "model_key": "snes_cardboard",
+      "is_default": 1
+    },
+    {
+      "platform_code": "GameCube",
+      "format_code": "MINI_DVD",
+      "width_mm": 135.0,
+      "height_mm": 190.0,
+      "depth_mm": 14.0,
+      "mass_g": 130.0,
+      "friction": 0.6,
+      "restitution": 0.06,
+      "model_key": "gamecube_dvd",
+      "is_default": 1
+    },
+    {
+      "platform_code": "Xbox",
+      "format_code": "DVD_GREEN",
+      "width_mm": 135.0,
+      "height_mm": 190.0,
+      "depth_mm": 14.0,
+      "mass_g": 150.0,
+      "friction": 0.6,
+      "restitution": 0.06,
+      "model_key": "xbox_dvd",
+      "is_default": 1
+    },
+    {
+      "platform_code": "PS3",
+      "format_code": "BLURAY",
+      "width_mm": 135.0,
+      "height_mm": 170.0,
+      "depth_mm": 12.0,
+      "mass_g": 125.0,
+      "friction": 0.56,
+      "restitution": 0.06,
+      "model_key": "ps3_bluray",
+      "is_default": 1
+    }
+  ],
+  "shelf_sections": [
+    {
+      "shelf_code": "EstanteriaPS1",
+      "platform_code": "PS1",
+      "section_index": 1,
+      "title_code": "ff7_ps1"
+    },
+    {
+      "shelf_code": "EstanteriaPS1",
+      "platform_code": "PS1",
+      "section_index": 2,
+      "title_code": "mgs_ps1"
+    },
+    {
+      "shelf_code": "EstanteriaPS2",
+      "platform_code": "PS2",
+      "section_index": 1,
+      "title_code": "gt4_ps2"
+    },
+    {
+      "shelf_code": "EstanteriaPS2",
+      "platform_code": "PS2",
+      "section_index": 2,
+      "title_code": "sh2_ps2"
+    },
+    {
+      "shelf_code": "EstanteriaN64",
+      "platform_code": "N64",
+      "section_index": 1,
+      "title_code": "mario64_n64"
+    },
+    {
+      "shelf_code": "EstanteriaN64",
+      "platform_code": "N64",
+      "section_index": 2,
+      "title_code": "zeldaoot_n64"
+    }
+  ]
+}

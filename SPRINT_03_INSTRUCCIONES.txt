@@ -1,0 +1,45 @@
+THE LAST PHYSICAL STORE — SPRINT 03: GUARDADO Y CARGA
+
+Contenido:
+- Proyecto Godot completo, basado en Sprint 02.
+- Se mantienen las estanterías por título y las consolas PS1, PS2 y N64.
+- Se conserva la identidad de cada copia (id_juego + id_copia), condición y edición.
+- Guardado automático después de recoger/colocar una copia.
+- Autoguardado periódico cada 60 segundos y al cerrar la ventana.
+- F6: guardar manualmente.
+- F9: recargar el último guardado válido.
+- Carga automática al iniciar cuando existe una partida.
+- Guardado en user://partida_01.json, copia de seguridad user://partida_01.bak.
+- Validación antes de restaurar: IDs únicos, capacidad de inventario, plataformas,
+  filas reservadas, posiciones sin duplicados y vectores válidos.
+- Versionado simple de guardado (versión 1).
+- Scripts de prueba: Tests/test_guardado.gd y Tests/test_estanteria.gd.
+
+INSTALACIÓN
+1. Extrae el ZIP en una CARPETA NUEVA. No lo descomprimas encima de tu copia anterior.
+2. Abre project.godot con Godot 4 y ejecuta con F5.
+3. Recoge juegos, ordénalos y pulsa F6 si quieres guardar inmediatamente.
+4. Cierra el juego, vuelve a ejecutar y comprueba que se restaura la partida.
+5. F9 recarga desde disco el último estado guardado; descartará cambios posteriores.
+
+PRUEBAS PRÁCTICAS
+A. Recoge dos copias y ordena una. Pulsa F6. Reinicia: las dos posiciones deben recuperarse.
+B. Recoge otra copia sin guardar manualmente. Reinicia: el guardado automático debe conservarla.
+C. Ordena juegos de títulos distintos. Reinicia: deben quedar en exactamente sus filas y columnas.
+D. Mueve el jugador, guarda con F6, reinicia: debe volver a la posición y orientación guardadas.
+E. Crea una copia, deja que caiga a la bodega, guarda, reinicia: debe mantener su identidad.
+F. Pulsa F9 durante la partida y verifica que se restaura el último estado persistido.
+
+NUEVA PARTIDA
+Este sprint utiliza una única ranura de guardado. Para iniciar de cero, utiliza
+Proyecto > Abrir carpeta de datos de usuario en Godot y, con el juego cerrado,
+mueve partida_01.json y partida_01.bak a otra carpeta como respaldo.
+No borres el proyecto ni los scripts.
+
+LÍMITES ACTUALES
+- No implementa todavía interfaz de selección de ranuras, Steam Cloud, archivo
+  físico, rarezas por categoría ni tienda final.
+- No migra automáticamente partidas de versiones futuras.
+- No se ha podido ejecutar Godot en este entorno; la prueba final requiere F5.
+- Para miles de copias será conveniente optimizar el flujo de autoguardado y el
+  sistema de instanciación por sectores.

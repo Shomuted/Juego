@@ -1,0 +1,81 @@
+THE LAST PHYSICAL STORE — INTEGRACIÓN DE DATOS / SPRINT 07
+Rol: Diseño y programación.
+Estado: Base de catálogo SQLite validada; migración de partidas NO realizada.
+
+RESULTADO DE LA INTEGRACIÓN
+- Copia original del esquema del analista: Database/schema_v0_1.sql
+- Datos del catálogo actual (12 títulos): Database/seed_prototype.sql
+- Base SQLite generada: Database/tlps_catalog_prototype.db
+- Exportación de contenido: Database/catalog_export.json
+- Script compatible de Godot: Scripts/catalogo_juegos.gd
+- Generador reproducible: Tools/build_catalog.py
+- Pruebas SQLite: Tests/test_schema_contract.py
+
+VENTAJAS PARA EL JUEGO
+- Los títulos y plataformas se definen en SQLite, y desde ahí se genera
+  el catálogo de GDScript con las mismas APIs existentes.
+- Se mantienen TODOS los codes/IDs lógicos, nombres y consolas del Sprint 06.
+- El juego sigue funcionando con su SaveManager JSON sin dependencias externas.
+- Los 7 formatos físicos del esquema tienen parámetros de contenido en milímetros.
+  Por ahora estos parámetros NO reemplazan la física o escalas de Godot; los
+  formatos jugables del Sprint 06 quedan intactos.
+- Se preparan 3 estanterías con 6 secciones, y 10 slots por título.
+  Hay 12 títulos de catálogo y 120 definiciones de slots en total; las
+  3 estanterías del prototipo solo exhiben seis títulos (60 posiciones).
+- Las reglas de stock del prototipo solo cubren los seis títulos jugables.
+  No son el balance definitivo de campaña de ~5.000 copias.
+- Las portadas con nombres de terceros siguen siendo contenido PROVISIONAL.
+  Antes de publicar habrá que definir arte, nombres y autorizaciones.
+
+CÓMO REGENERAR LOS DATOS (en la carpeta del proyecto)
+1. Ejecutar: python3 Tools/build_catalog.py
+2. Ejecutar: python3 -m unittest discover -s Tests -p 'test_schema_contract.py' -v
+3. Abrir project.godot y probar en Godot 4 el flujo de recoger, ordenar y cargar.
+4. No borrar el guardado de user:// ni usar los archivos SQLite para reemplazarlo.
+
+NO CAMBIAMOS
+- Guardado/carga y botón de reinicio del Sprint 06.
+- Inventario, física de cajas, generador, etiquetas, HUD.
+- Posiciones y capacidades actuales de las estanterías.
+- Existencia de 'es_especial' bool en las copias del prototipo.
+
+REGLAS QUE REQUIEREN DECISIÓN ANTES DE MIGRAR SAVES A SQL
+1. El prototipo guarda es_especial=true/false. El esquema define GOTY/Collector.
+   No hay manera inequívoca de deducir cuál era la edición histórica.
+   No se convertirá silenciosamente 'true' a GOTY ni a Collector.
+2. Los slots persistentes del prototipo usan índice fila*10+columna desde 0,
+   mientras que el esquema usa slot_index >= 1 y slot_id propio.
+   Una futura migración necesita un mapeo estable.
+3. Antes de mover 5.000 copias, diseñar operaciones transaccionales de cambio
+   de ubicación, y el destino permitido para excedentes/no exhibidos.
+4. El sistema final debe versionar migraciones de datos del catálogo/saves.
+
+REVISIÓN DEL SQL V0.1: OBSERVACIONES TÉCNICAS
+Probado con SQLite 3.46.1: 35 tablas, 19 triggers, 3 views; la creación y
+las relaciones inicialmente sembradas pasaron PRAGMA foreign_key_check y
+PRAGMA integrity_check; seis pruebas automáticas también pasaron.
+
+Brechas confirmadas que deben corregirse en una migración versionada:
+A. Se permite actualizar title.platform_id sin actualizar formatos de
+   title_edition; deja una edición ligada a un formato de otra plataforma.
+B. Se permite actualizar shelf.platform_id aunque sus shelf_section
+   contengan colecciones de otra plataforma.
+C. Se permite cambiar collection_slot_state.current_title_edition_id aunque
+   ya esté ocupada por una physical_copy de otra edición. Se verificó.
+D. No se impide modificar location.location_kind sin actualizar los
+   datos del subtipo correspondiente (warehouse/inventory/archive/slot).
+E. El nivel de save_upgrade puede superar upgrade_definition.max_level
+   porque solo se valida level > 0.
+F. La vista v_collection_progress incluye todas las definiciones de
+   colección para todas las partidas; una futura ampliación del catálogo
+   podría aparecer en partidas antiguas sin snapshot/criterio de elegibilidad.
+
+Estos puntos NO se solucionan reinterpretando las mecánicas del juego.
+El analista y el programador deben acordar las restricciones de integridad
+antes de introducir SQLite como guardado definitivo.
+
+PRÓXIMO SPRINT PROPUESTO
+- Corregir esas restricciones en schema v0.2 con pruebas automáticas.
+- Definir el contrato de migración para la copia y el slot, sin pérdida de IDs.
+- Elegir explícitamente si SQLite gestionará el estado en runtime mediante
+  un complemento Godot compatible o si seguiremos exportando JSON desde SQL.

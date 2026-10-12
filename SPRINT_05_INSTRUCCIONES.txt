@@ -1,0 +1,53 @@
+THE LAST PHYSICAL STORE — SPRINT 05
+===================================
+
+Proyecto base: Sprint 04 CORREGIDO.
+
+FORMATO Y FÍSICA
+----------------
+Cada copia usa dimensiones, masa, fricción y rebote definidos por consola.
+PS1: cuerpo cuadrado de jewel case con bisagra y marco.
+PS2: caja DVD vertical, con lomo y cierre.
+N64: caja más profunda de cartón, con solapa y doblez.
+PS3: caja Blu-ray oscura con cabecera, preparada para futuro contenido.
+SNES, GameCube y Xbox también tienen perfiles base definidos para ampliar el catálogo.
+
+Las carátulas son provisionales: mantienen nombre del título y consola.
+Los detalles decorativos no cambian el volumen principal de colisión.
+Las estanterías conservan filas, columnas y capacidad del sprint anterior.
+
+REINICIAR PARTIDA PARA PRUEBAS
+------------------------------
+1. Inicia el juego con F5.
+2. Pulsa F8. Se pedirá confirmación dentro del juego.
+3. Pulsa F8 nuevamente dentro de 6 segundos.
+4. Se borran user://partida_01.json, partida_01.bak y partida_01.tmp.
+5. La escena se recarga y genera un lote nuevo.
+
+IMPORTANTE: este reinicio es destructivo e irreversible. Conserva una copia
+de la partida antes de utilizarlo si deseas proteger tu progreso.
+El flujo de reinicio suspende el autoguardado para no reconstruir archivos
+antiguos por accidente.
+
+F6: guardar manualmente.
+F9: cargar partida.
+F8 dos veces: borrar progreso y empezar una partida para pruebas.
+
+PRUEBAS EN GODOT
+----------------
+- Confirma que cajas de distintas consolas tienen distintas siluetas.
+- Suelta varias cajas: N64 debe reaccionar con masa y fricción distintas.
+- Coloca copias en sus respectivas estanterías: no deben alterar slots.
+- Guarda con F6, cierra y abre: los datos deben permanecer.
+- Pulsa F8 dos veces: debe quedar sin inventario y con estantes vacíos.
+- Vuelve a abrir: no debe reaparecer la partida previa.
+- Después del reinicio, guarda con F6 y carga con F9: debe funcionar.
+
+Ejecución de pruebas (con Godot instalado):
+godot --headless --path . --script res://Tests/test_formatos.gd
+godot --headless --path . --script res://Tests/test_formato_fisica.gd
+godot --headless --path . --script res://Tests/test_estanteria.gd
+godot --headless --path . --script res://Tests/test_guardado.gd
+
+No se ejecutó Godot dentro del entorno que generó este ZIP. Las verificaciones
+estáticas y del contenido del ZIP no sustituyen las pruebas en el motor.

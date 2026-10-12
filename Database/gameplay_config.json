@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "titulos": ["ff7_ps1", "mgs_ps1", "gt4_ps2", "sh2_ps2", "mario64_n64", "zeldaoot_n64"],
+  "copias_por_titulo": 10,
+  "mesas_bodega": [[-6, 6.5], [0, 6.5], [6, 6.5], [-6, 9.5], [0, 9.5], [6, 9.5]],
+  "duracion_dia": 180,
+  "intervalo_visitas": 12,
+  "experiencia_clasificar": 5,
+  "recompensa_coleccion": {"dinero": 120, "xp": 50},
+  "ticket_base": 4,
+  "mejoras": {
+    "inventario": {"base": 5, "paso": 2, "costos": [80, 160, 260], "xp": [25, 100, 200]},
+    "alcance": {"base": 3, "paso": 0.5, "costos": [60, 120, 200], "xp": [25, 75, 150]}
+  },
+  "estilos": {
+    "arcade": {"costos": [60, 120, 180]},
+    "museo": {"costos": [60, 120, 180]},
+    "cyber": {"costos": [60, 120, 180]}
+  }
+}
