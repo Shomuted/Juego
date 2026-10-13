@@ -1,8 +1,25 @@
 # Continuidad de The Last Physical Store
 
-La versión actual es la [Alpha 0.2](alpha-02.md), que amplía el Sprint 07 con una
-campaña de 60 copias, visitantes, economía, mejoras y guardado JSON v2. Los
-handoffs originales y este plan se conservan como antecedentes de diseño.
+La versión actual es la [Alpha 0.2.1](alpha-021.md): 60 copias mezcladas en montones
+y sueltas por el suelo de una sola tienda, 1 XP por copia ordenada y guardado JSON v3.
+Los handoffs originales y este plan se conservan como antecedentes de diseño.
+
+## Corrección del director después de probar Alpha 0.2
+
+Esta instrucción directa prevalece sobre interpretaciones anteriores:
+
+- El núcleo es encontrar copias entre el desorden del suelo, recogerlas y ordenar
+  las estanterías. No entregar juegos ya agrupados en mesas por título o plataforma.
+- El desorden debe estar en la tienda, sin separar el trabajo en dos salas.
+- Cada copia colocada representa 1 XP. Sin multiplicadores ni bonos por colección.
+- Los ingresos proceden de visitantes; clasificar no entrega dinero.
+- Priorizar la interacción y las colecciones antes que decorar.
+- Mantener movimiento y salto, que el director sí confirmó como satisfactorios.
+- Sort'em Ducks es la referencia indicada para la experiencia de buscar y ordenar.
+
+La palabra histórica «bodega» en un documento o campo del save no autoriza convertir
+este núcleo en una sala de mesas ordenadas. Las decisiones de ediciones, excedentes
+y archivo que siguen abiertas no deben resolverse implícitamente al ampliar sistemas.
 
 ## Alcance y evidencia
 
@@ -29,8 +46,8 @@ El trabajo continúa sobre la visión de Godot 4 para PC/Steam.
 - Los reemplazos aceptados conservan la categoría requerida y mejoran la condición.
   La copia retirada pasa al archivo. El traslado de ambas copias debe ser atómico.
 - La calidad se deriva de las copias exhibidas, sin incluir las archivadas.
-- Colección actualmente completa, completada alguna vez y recompensa ya entregada
-  son estados distintos. La primera recompensa no se repite.
+- Colección actualmente completa y completada alguna vez son estados distintos.
+  La versión actual solo registra el hito: no entrega dinero ni XP adicional.
 - Una remodelación visual no modifica IDs, capacidades ni posiciones lógicas.
 - Miles de copias persistentes no requieren miles de cuerpos físicos activos.
 

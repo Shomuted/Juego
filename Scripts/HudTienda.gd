@@ -67,7 +67,7 @@ func _ready() -> void:
 	mochila.custom_minimum_size = Vector2(252, 0)
 	var contenido: VBoxContainer = _columna(mochila, 8)
 	inventario_label = _texto(contenido, "EN TUS MANOS  0 / 5", 13, MENTA)
-	lista_label = _texto(contenido, "Busca las cajas en la bodega.", 12, CREMA)
+	lista_label = _texto(contenido, "Busca juegos entre los montones del suelo.", 12, CREMA)
 	lista_label.custom_minimum_size.x = 220
 	lista_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	lista_label.clip_text = true
@@ -80,7 +80,7 @@ func _ready() -> void:
 	archivo.offset_right = -20
 	archivo.offset_top = 108
 	var colecciones: VBoxContainer = _columna(archivo, 9)
-	progreso_label = _texto(colecciones, "EL ARCHIVO  ·  0 / 60", 13, MENTA)
+	progreso_label = _texto(colecciones, "ORDENADOS  ·  0 / 60", 13, MENTA)
 	for indice in range(TITULOS.size()):
 		var grupo: VBoxContainer = _columna(colecciones, 3)
 		var fila_nombre: HBoxContainer = HBoxContainer.new()
@@ -99,8 +99,8 @@ func _ready() -> void:
 	objetivo.offset_top = -171
 	objetivo.offset_bottom = -67
 	var tarea: VBoxContainer = _columna(objetivo, 5)
-	_texto(tarea, "PRÓXIMO CAPÍTULO", 10, CORAL)
-	objetivo_label = _texto(tarea, "Recupera las 60 copias\ny completa las 6 colecciones.", 12, CREMA)
+	_texto(tarea, "DEL SUELO A LA ESTANTERÍA", 10, CORAL)
+	objetivo_label = _texto(tarea, "Ordena las 60 copias del suelo\ny completa las 6 colecciones.", 12, CREMA)
 	objetivo_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	objetivo_barra = _barra(tarea, 60.0, 4)
 
@@ -124,7 +124,7 @@ func _ready() -> void:
 	indicacion.offset_right = 238
 	indicacion.offset_top = -103
 	indicacion.offset_bottom = -62
-	interaccion_label = _texto(indicacion, "Explora la bodega y recupera tu primera copia", 12, CREMA)
+	interaccion_label = _texto(indicacion, "Busca entre los montones y recoge tu primera copia", 12, CREMA)
 	interaccion_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	interaccion_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	interaccion_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -151,9 +151,9 @@ func _ready() -> void:
 	victoria.offset_right = 198
 	victoria.offset_top = 104
 	var anuncio: VBoxContainer = _columna(victoria, 2)
-	var titulo: Label = _texto(anuncio, "MUSEO INAUGURADO", 21, TINTA)
+	var titulo: Label = _texto(anuncio, "¡TIENDA ORDENADA!", 21, TINTA)
 	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var detalle: Label = _texto(anuncio, "Campaña completada · Tu archivo sigue abierto", 11, TINTA)
+	var detalle: Label = _texto(anuncio, "60 copias en su sitio · 6 colecciones completas", 11, TINTA)
 	detalle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	victoria.visible = false
 
@@ -263,7 +263,7 @@ func _actualizar_datos() -> void:
 		lineas.append("%s\n%s · %d/100%s" % [titulo, str(juego.get("consola", "?")), int(juego.get("condicion", 0)), " · ESPECIAL" if bool(juego.get("es_especial", false)) else ""])
 	if juegos.size() > 5:
 		lineas.append("+ %d copias más · E para clasificar" % (juegos.size() - 5))
-	lista_label.text = "\n".join(lineas) if not lineas.is_empty() else "Busca las cajas en la bodega.\nCada ejemplar cuenta."
+	lista_label.text = "\n".join(lineas) if not lineas.is_empty() else "Busca juegos entre los montones del suelo.\nCada copia ordenada aporta 1 XP."
 
 	var total: int = 0
 	var completas: int = 0
@@ -279,7 +279,7 @@ func _actualizar_datos() -> void:
 		contador.text = "%d/10" % cantidad
 		contador.add_theme_color_override("font_color", MENTA if cantidad == 10 else APAGADO)
 		(filas_coleccion[indice]["barra"] as ProgressBar).value = cantidad
-	progreso_label.text = "EL ARCHIVO  ·  %d / 60" % total
+	progreso_label.text = "ORDENADOS  ·  %d / 60" % total
 	objetivo_barra.value = total
 
 	var tienda: Object = _estado()
@@ -293,15 +293,15 @@ func _actualizar_datos() -> void:
 	visitas_label.text = "%d visitantes hoy  ·  $%d recaudados" % [int(datos.get("visitantes_hoy", 0)), int(datos.get("ingresos_hoy", 0))]
 	victoria.visible = tienda.has_method("campana_completa") and bool(tienda.call("campana_completa"))
 	if victoria.visible:
-		objetivo_label.text = "60 historias preservadas.\nSigue abriendo y mejora tu museo."
+		objetivo_label.text = "60 copias en su sitio.\nLa tienda está ordenada."
 	elif total == 0 and juegos.is_empty():
-		objetivo_label.text = "Entra a la bodega y recoge\ntu primera copia con CLIC."
+		objetivo_label.text = "Mira al suelo y recoge\ntu primera copia con CLIC."
 	elif not juegos.is_empty():
-		objetivo_label.text = "Acércate a su estantería\ny pulsa E para clasificar."
+		objetivo_label.text = "Pulsa E junto a su estantería.\nCada copia nueva suma 1 XP."
 	elif es_dia:
-		objetivo_label.text = "Recupera copias mientras\nel público visita tu colección."
+		objetivo_label.text = "Sigue despejando el suelo\nmientras llegan las visitas."
 	else:
-		objetivo_label.text = "%d / 6 colecciones completas.\nAbre desde el mostrador con R." % completas
+		objetivo_label.text = "%d / 6 colecciones completas.\nBusca más copias en el suelo." % completas
 
 
 func _actualizar_interaccion() -> void:

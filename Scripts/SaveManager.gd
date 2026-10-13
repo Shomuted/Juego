@@ -1,10 +1,11 @@
 extends Node
 
-const VERSION: int = 2
+const VERSION: int = 3
 const RUTA: String = "user://partida_01.json"
 const RUTA_TEMPORAL: String = "user://partida_01.tmp"
 const RUTA_RESPALDO: String = "user://partida_01.bak"
 const RUTA_LEGACY: String = "user://partida_01_sprint07_original.json"
+const RUTA_ALPHA02: String = "user://partida_01_alpha02_original.json"
 const ESTADO_TIENDA = preload("res://Scripts/EstadoTienda.gd")
 const ESCENA_CAJA: PackedScene = preload("res://caja_juego.tscn")
 
@@ -169,6 +170,10 @@ func cargar_partida(escena: Node) -> bool:
 		var original: String = RUTA_RESPALDO if cargado_desde_respaldo else RUTA
 		if DirAccess.copy_absolute(ProjectSettings.globalize_path(original), ProjectSettings.globalize_path(RUTA_LEGACY)) != OK:
 			return _error("No se pudo conservar una copia del guardado antiguo.")
+	if int(estado["version"]) == 2 and not FileAccess.file_exists(RUTA_ALPHA02):
+		var original: String = RUTA_RESPALDO if cargado_desde_respaldo else RUTA
+		if DirAccess.copy_absolute(ProjectSettings.globalize_path(original), ProjectSettings.globalize_path(RUTA_ALPHA02)) != OK:
+			return _error("No se pudo conservar la partida original de Alpha 0.2.")
 
 	var nuevas_cajas: Array[CajaJuego] = []
 	for registro in estado["bodega"]:
@@ -192,6 +197,10 @@ func cargar_partida(escena: Node) -> bool:
 				preparada.free()
 			return _error("No se pudo reconstruir una copia.")
 		nuevas_cajas.append(caja)
+	# Alpha 0.2 entregaba cajas preordenadas en mesas. Se corrige solo el suelo:
+	# inventario, slots, atributos e identidades se conservan. v1 ya tenía suelo.
+	if int(estado["version"]) == 2:
+		generador.distribuir_copias(nuevas_cajas, int(estado["tienda"]["semilla"]))
 
 	restaurando = true
 	guardado_pendiente = false
@@ -218,11 +227,14 @@ func cargar_partida(escena: Node) -> bool:
 	for i in range(nuevas_cajas.size()):
 		var caja_nueva: CajaJuego = nuevas_cajas[i]
 		var registro_caja: Dictionary = estado["bodega"][i]
-		caja_nueva.position = _a_vector3(registro_caja["posicion"])
-		caja_nueva.rotation = _a_vector3(registro_caja["rotacion"])
+		if int(estado["version"]) != 2:
+			caja_nueva.position = _a_vector3(registro_caja["posicion"])
+			caja_nueva.rotation = _a_vector3(registro_caja["rotacion"])
 		generador.add_child(caja_nueva)
-		caja_nueva.linear_velocity = _a_vector3(registro_caja["velocidad_lineal"])
-		caja_nueva.angular_velocity = _a_vector3(registro_caja["velocidad_angular"])
+		if int(estado["version"]) != 2:
+			caja_nueva.linear_velocity = _a_vector3(registro_caja["velocidad_lineal"])
+			caja_nueva.angular_velocity = _a_vector3(registro_caja["velocidad_angular"])
+		caja_nueva.continuous_cd = true
 	escena.tienda.restaurar(_estado_tienda(estado))
 
 	restaurando = false
@@ -233,7 +245,7 @@ func cargar_partida(escena: Node) -> bool:
 		)
 		if copia_respaldo != OK:
 			push_warning("No fue posible reparar el archivo principal desde el respaldo.")
-	print("Partida restaurada: %d cajas en bodega." % nuevas_cajas.size())
+	print("Partida restaurada: %d cajas en el suelo." % nuevas_cajas.size())
 	return true
 
 
@@ -307,10 +319,10 @@ func _leer_estado(ruta: String) -> Dictionary:
 
 func _validar_estado(estado: Dictionary, escena: Node) -> String:
 	var version: Variant = estado.get("version", -1)
-	if not _numero_valido(version) or float(version) not in [1.0, float(VERSION)]:
+	if not _numero_valido(version) or float(version) not in [1.0, 2.0, float(VERSION)]:
 		return "Versión de guardado desconocida."
 	var modelo = ESTADO_TIENDA.new()
-	if int(estado["version"]) == VERSION:
+	if int(estado["version"]) >= 2:
 		var error_tienda: String = modelo.validar(estado.get("tienda"))
 		if not error_tienda.is_empty():
 			return error_tienda
@@ -398,7 +410,7 @@ func _validar_estado(estado: Dictionary, escena: Node) -> String:
 			if str(info["filas"][int(posicion / EstanteriaJuegos.COLUMNAS)]) != str(copia["id_juego"]):
 				return "La copia no coincide con el título de su fila."
 
-	if int(estado["version"]) == VERSION:
+	if int(estado["version"]) >= 2:
 		for campo in ["manifiesto", "clasificadas"]:
 			for id_copia in estado["tienda"][campo]:
 				if not identificadores.has(id_copia):
@@ -410,10 +422,10 @@ func _validar_estado(estado: Dictionary, escena: Node) -> String:
 
 
 func _estado_tienda(estado: Dictionary) -> Dictionary:
-	if int(estado["version"]) == VERSION:
+	if int(estado["version"]) >= 2:
 		return estado["tienda"].duplicate(true)
 	# Migración aditiva del Sprint 07: no cambia identidades ni ediciones.
-	# No inventa premios pasados. Las colecciones ya completas no se vuelven a premiar.
+	# Cuenta un XP por cada copia exhibida, sin inventar premios monetarios pasados.
 	var modelo = ESTADO_TIENDA.new()
 	var ids: Array = []
 	for copia in estado["inventario"]:
@@ -431,6 +443,7 @@ func _estado_tienda(estado: Dictionary) -> Dictionary:
 			if cantidades[id_juego] == EstanteriaJuegos.COLUMNAS:
 				modelo.datos["completadas"].append(id_juego)
 	modelo.registrar_manifiesto(ids)
+	modelo.datos["xp"] = modelo.datos["clasificadas"].size()
 	return modelo.exportar()
 
 

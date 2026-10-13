@@ -27,7 +27,6 @@ func _ready() -> void:
 	_construir_sala()
 	_construir_iluminacion()
 	_construir_mostrador()
-	_construir_bodega()
 	_construir_decoraciones()
 	actualizar_ambiente(false, {})
 
@@ -105,18 +104,12 @@ func _texto(padre: Node3D, texto: String, centro: Vector3, tamano: int,
 func _construir_sala() -> void:
 	var techo: MeshInstance3D = _caja(self, Vector3(0, 4.48, 0.75), Vector3(22, 0.12, 22.5), Color("dfd7c5"))
 	techo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	# Revestimientos sin colisión: el suelo físico pertenece a la escena original.
-	_caja(self, Vector3(0, 0.006, -3.25), Vector3(22, 0.012, 14.5), CREMA)
-	_caja(self, Vector3(0, 0.007, 8), Vector3(22, 0.014, 8), Color("b3ac9b"))
+	# Una sola tienda. El suelo de la escena es también la superficie visible:
+	# sin alfombras que oculten cajas delgadas ni planos superpuestos que parpadeen.
 	for x in range(-10, 11, 2):
-		_caja(self, Vector3(x, 0.014, -3.25), Vector3(0.025, 0.006, 14.5), Color("b6af9e"))
-	for z in range(-10, 5, 2):
-		_caja(self, Vector3(0, 0.014, z), Vector3(22, 0.006, 0.025), Color("b6af9e"))
-	# Alfombra de recorrido; el centro permanece libre de obstáculos.
-	_caja(self, Vector3(0, 0.022, -3.1), Vector3(15.5, 0.015, 3.5), OSCURO)
-	_caja(self, Vector3(0, 0.031, -3.1), Vector3(15.15, 0.01, 3.15), TEAL)
-	for x in [-7.2, 7.2]:
-		_caja(self, Vector3(x, 0.04, -3.1), Vector3(0.05, 0.01, 2.75), AMBAR)
+		_caja(self, Vector3(x, 0.001, 0.75), Vector3(0.018, 0.002, 22.5), Color("b6af9e"))
+	for z in range(-10, 12, 2):
+		_caja(self, Vector3(0, 0.001, z), Vector3(22, 0.002, 0.018), Color("b6af9e"))
 	_caja(self, Vector3(0, 2.2, -10.5), Vector3(22.4, 4.4, 0.3), CREMA, true)
 	_caja(self, Vector3(0, 2.2, 12), Vector3(22.4, 4.4, 0.3), CREMA, true)
 	for x in [-11.0, 11.0]:
@@ -229,42 +222,6 @@ func _construir_mostrador() -> void:
 	for indice in range(3):
 		_caja(self, Vector3(5.7, 1.12 + indice * 0.075, 1.5), Vector3(0.45, 0.07, 0.58), [MENTA, AMBAR, CREMA][indice])
 	_planta(self, Vector3(10.1, 0, 2.7), 0.8)
-
-
-func _construir_bodega() -> void:
-	# Puerta central de 3.6 metros; se preserva el tránsito entre ambas salas.
-	for x in [-6.4, 6.4]:
-		_caja(self, Vector3(x, 1.85, 4), Vector3(9.2, 3.7, 0.2), TEAL, true)
-		_caja(self, Vector3(x, 0.1, 3.88), Vector3(9.2, 0.2, 0.05), OSCURO)
-	_caja(self, Vector3(0, 3.85, 4), Vector3(22, 0.5, 0.2), TEAL, true)
-	for x in [-1.85, 1.85]:
-		_caja(self, Vector3(x, 1.8, 4), Vector3(0.1, 3.6, 0.28), MADERA)
-	_texto(self, "BODEGA / CLASIFICACIÓN", Vector3(0, 3.3, 3.86), 61, AMBAR, PI)
-	_texto(self, "SALA DE COLECCIONES", Vector3(0, 3.3, 4.14), 61, AMBAR)
-	_texto(self, "TODO COMIENZA\nCON UNA COPIA", Vector3(-6, 2.1, 3.87), 95, CREMA, PI)
-	_texto(self, "RECUPERAR  /  CLASIFICAR  /  CONSERVAR", Vector3(0, 3.45, 11.78), 96, OSCURO, PI)
-	_texto(self, "MESA DE TRABAJO · LOS NUEVOS LOTES LLEGAN AQUÍ", Vector3(0, 2.98, 11.77), 44, TEAL, PI)
-	for fila in range(2):
-		for columna in range(3):
-			var x: float = [-6.0, 0.0, 6.0][columna]
-			var z: float = [6.5, 9.5][fila]
-			var mesa := Node3D.new()
-			mesa.name = "MesaLotes%d" % (fila * 3 + columna + 1)
-			mesa.position = Vector3(x, 0, z)
-			add_child(mesa)
-			# Superficie exacta y=0.75, igual que la configuración de entregas.
-			_caja(mesa, Vector3(0, 0.69, 0), Vector3(4, 0.12, 1.6), MADERA, true)
-			for dx in [-1.8, 1.8]:
-				for dz in [-0.6, 0.6]:
-					_caja(mesa, Vector3(dx, 0.315, dz), Vector3(0.09, 0.63, 0.09), OSCURO, true)
-			_caja(mesa, Vector3(0, 0.14, 0), Vector3(3.8, 0.08, 1.2), OSCURO)
-			_caja(mesa, Vector3(0, 0.535, -0.812), Vector3(0.75, 0.19, 0.024), CREMA)
-			_texto(mesa, "LOTE %02d" % (fila * 3 + columna + 1), Vector3(0, 0.535, -0.831), 39, OSCURO, PI, 0.002)
-			_caja(mesa, Vector3(-1.2, 0.31, 0.12), Vector3(0.85, 0.25, 0.7), Color("ba9871"))
-			_caja(mesa, Vector3(-1.2, 0.44, 0.12), Vector3(0.14, 0.015, 0.72), CREMA)
-	# Franjas en el umbral indican la zona de recepción sin bloquear el paso.
-	for x in range(-3, 4):
-		_caja(self, Vector3(x * 0.43, 0.025, 4.18), Vector3(0.22, 0.02, 0.45), AMBAR)
 
 
 func _poster(padre: Node3D, centro: Vector3, giro: float, titulo: String,

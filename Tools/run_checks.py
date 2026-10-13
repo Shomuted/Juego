@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent
 TESTS = {
     "test_progresion.gd": r"PROGRESIÓN: (\d+) pruebas, 0 fallos",
     "test_campana.gd": r"CAMPAÑA: (\d+) pruebas, 0 fallos",
+    "test_suelo.gd": r"SUELO: (\d+) pruebas, 0 fallos",
     "test_estanteria.gd": r"RESULTADO: (\d+) comprobaciones, 0 fallos\.",
     "test_formatos.gd": r"SPRINT 04: (\d+) comprobaciones, 0 fallos\.",
     "test_formato_fisica.gd": r"FORMATOS FÍSICOS: (\d+) pruebas, 0 errores",

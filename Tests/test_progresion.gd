@@ -10,6 +10,7 @@ func _initialize() -> void:
 	_probar_economia()
 	_probar_jornadas()
 	_probar_guardado()
+	_probar_experiencia_legada()
 	print("PROGRESIÓN: %d pruebas, %d fallos" % [pruebas, fallos])
 	quit(1 if fallos > 0 else 0)
 
@@ -19,6 +20,11 @@ func _comprobar(condicion: bool, descripcion: String) -> void:
 	if not condicion:
 		fallos += 1
 		push_error("FALLO: " + descripcion)
+
+
+func _clasificar_hasta(tienda: RefCounted, cantidad: int) -> void:
+	for indice: int in range(tienda.datos["clasificadas"].size(), cantidad):
+		tienda.registrar_clasificacion("prueba_%d" % indice)
 
 
 func _probar_campana() -> void:
@@ -33,8 +39,8 @@ func _probar_campana() -> void:
 	_comprobar(tienda.datos["manifiesto"].size() == 3, "No se reemplaza el stock original al cargar o volver a escanear")
 	_comprobar(not tienda.registrar_clasificacion(""), "Un ID vacío no concede XP")
 	_comprobar(tienda.registrar_clasificacion("copia_1"), "La primera clasificación se registra")
-	_comprobar(tienda.datos["xp"] == 5, "Clasificar una copia concede 5 XP")
-	_comprobar(not tienda.registrar_clasificacion("copia_1") and tienda.datos["xp"] == 5, "Mover de nuevo una copia no duplica XP")
+	_comprobar(tienda.datos["xp"] == 1 and tienda.datos["dinero"] == 0, "Clasificar una copia concede exactamente 1 XP y ningún crédito")
+	_comprobar(not tienda.registrar_clasificacion("copia_1") and tienda.datos["xp"] == 1, "Mover de nuevo una copia no duplica XP")
 	_comprobar(is_equal_approx(tienda.progreso(), 1.0 / 3.0), "El progreso cuenta IDs del stock original")
 	tienda.registrar_clasificacion("copia_externa")
 	_comprobar(is_equal_approx(tienda.progreso(), 1.0 / 3.0), "IDs ajenos no inflan el progreso de campaña")
@@ -42,10 +48,10 @@ func _probar_campana() -> void:
 	_comprobar(not tienda.campana_completa(), "Tantas clasificaciones como stock no bastan si falta una copia original")
 	tienda.registrar_clasificacion("copia_3")
 	_comprobar(tienda.campana_completa() and tienda.progreso() == 1.0, "Clasificar todo el stock completa la campaña")
-	_comprobar(tienda.completar_coleccion("ff7_ps1"), "Una colección se puede premiar por primera vez")
-	_comprobar(tienda.datos["dinero"] == 120 and tienda.datos["xp"] == 70, "La ayuda suma créditos y XP a lo existente")
-	_comprobar(not tienda.completar_coleccion("ff7_ps1"), "La misma colección no repite el premio")
-	_comprobar(tienda.datos["dinero"] == 120 and tienda.datos["xp"] == 70, "Intentar repetir el premio mantiene los saldos")
+	_comprobar(tienda.completar_coleccion("ff7_ps1"), "Se registra la primera colección completa")
+	_comprobar(tienda.datos["dinero"] == 0 and tienda.datos["xp"] == 4, "Completar una colección conserva 1 XP por copia sin conceder dinero")
+	_comprobar(not tienda.completar_coleccion("ff7_ps1"), "La misma colección no repite el hito")
+	_comprobar(tienda.datos["dinero"] == 0 and tienda.datos["xp"] == 4, "Repetir el hito mantiene los saldos")
 	tienda.reiniciar()
 	_comprobar(tienda.datos["dinero"] == 0 and tienda.datos["xp"] == 0 and tienda.datos["manifiesto"].is_empty(), "Reiniciar borra toda la progresión")
 	_comprobar(not tienda.campana_completa(), "Reiniciar no concede la victoria por un stock vacío")
@@ -63,16 +69,23 @@ func _probar_economia() -> void:
 	_comprobar(not tienda.comprar_estilo("inexistente").is_empty(), "Se rechazan estilos desconocidos")
 	tienda.datos["dinero"] = 1000
 	_comprobar(not tienda.comprar_mejora("inventario").is_empty() and tienda.datos["dinero"] == 1000, "El dinero no evita el requisito de XP")
-	tienda.datos["xp"] = 25
+	_clasificar_hasta(tienda, 4)
+	_comprobar(not tienda.comprar_mejora("inventario").is_empty() and tienda.datos["dinero"] == 1000, "Cuatro copias no alcanzan la primera mejora")
+	_clasificar_hasta(tienda, 5)
 	tienda.datos["dinero"] = 79
 	_comprobar(not tienda.comprar_mejora("inventario").is_empty() and tienda.datos["dinero"] == 79, "El precio completo es necesario")
 	tienda.datos["dinero"] = 80
 	_comprobar(tienda.comprar_mejora("inventario").is_empty(), "Se compra con dinero y XP exactos")
-	_comprobar(tienda.capacidad_inventario() == 7 and tienda.datos["dinero"] == 0 and tienda.datos["xp"] == 25, "Comprar cobra dinero y conserva la experiencia")
+	_comprobar(tienda.capacidad_inventario() == 7 and tienda.datos["dinero"] == 0 and tienda.datos["xp"] == 5, "Comprar cobra dinero y conserva el XP de las cinco copias")
 	tienda.datos["dinero"] = 5000
-	tienda.datos["xp"] = 1000
-	tienda.comprar_mejora("inventario")
-	tienda.comprar_mejora("inventario")
+	_clasificar_hasta(tienda, 19)
+	_comprobar(not tienda.comprar_mejora("inventario").is_empty() and tienda.datos["dinero"] == 5000, "La segunda mejora espera a veinte copias")
+	_clasificar_hasta(tienda, 20)
+	_comprobar(tienda.comprar_mejora("inventario").is_empty(), "Veinte copias desbloquean la segunda mejora")
+	_clasificar_hasta(tienda, 39)
+	_comprobar(not tienda.comprar_mejora("inventario").is_empty() and tienda.datos["dinero"] == 4840, "La tercera mejora espera a cuarenta copias")
+	_clasificar_hasta(tienda, 40)
+	_comprobar(tienda.comprar_mejora("inventario").is_empty(), "Cuarenta copias desbloquean la tercera mejora")
 	_comprobar(tienda.capacidad_inventario() == 11, "Inventario alcanza once espacios en nivel tres")
 	var saldo: int = int(tienda.datos["dinero"])
 	_comprobar(not tienda.comprar_mejora("inventario").is_empty() and tienda.datos["dinero"] == saldo, "Comprar por encima del máximo no cobra")
@@ -137,6 +150,7 @@ func _probar_guardado() -> void:
 	tienda.registrar_manifiesto(["uno", "dos"])
 	tienda.registrar_clasificacion("uno")
 	tienda.completar_coleccion("ff7_ps1")
+	tienda.datos["dinero"] = 60
 	tienda.comprar_estilo("arcade")
 	tienda.abrir_dia()
 	tienda.avanzar(13.25, 10, 80.0)
@@ -148,10 +162,10 @@ func _probar_guardado() -> void:
 	_comprobar(tienda.validar(guardado).is_empty(), "Los números enteros de JSON son aceptados")
 	var cargada = Modelo.new()
 	_comprobar(cargada.restaurar(guardado), "La tienda restaura su estado completo")
-	_comprobar(cargada.exportar() == guardado, "Restaurar conserva todos los valores del JSON sin conceder recursos")
+	_comprobar(JSON.parse_string(JSON.stringify(cargada.exportar())) == guardado, "Restaurar conserva todos los valores del JSON sin conceder recursos")
 	guardado["estilos"]["arcade"] = 3
 	_comprobar(cargada.datos["estilos"]["arcade"] == 1, "Restaurar toma una copia independiente")
-	_comprobar(not cargada.registrar_clasificacion("uno") and not cargada.completar_coleccion("ff7_ps1"), "Persisten las marcas que evitan premios duplicados")
+	_comprobar(not cargada.registrar_clasificacion("uno") and not cargada.completar_coleccion("ff7_ps1"), "Persisten las marcas que evitan XP e hitos duplicados")
 	_comprobar(not cargada.campana_completa() and cargada.progreso() == 0.5, "La carga conserva el stock original y el progreso real")
 	var eventos_original: Array[Dictionary] = tienda.avanzar(10.75, 10, 80.0)
 	var eventos_cargados: Array[Dictionary] = cargada.avanzar(10.75, 10, 80.0)
@@ -186,3 +200,33 @@ func _probar_guardado() -> void:
 	var nocturno: Dictionary = antes.duplicate(true)
 	nocturno["fase"] = "NOCHE"
 	_comprobar(not cargada.restaurar(nocturno), "La noche no admite temporizadores de apertura activos")
+
+
+func _probar_experiencia_legada() -> void:
+	var tienda = Modelo.new()
+	_clasificar_hasta(tienda, 60)
+	for titulo: String in tienda.reglas["titulos"]:
+		tienda.completar_coleccion(titulo)
+	_comprobar(tienda.datos["xp"] == 60 and tienda.datos["dinero"] == 0, "Sesenta copias y seis colecciones representan sesenta XP sin pagos por ordenar")
+	var legado: Dictionary = tienda.exportar()
+	legado["xp"] = 600
+	legado["dinero"] = 720
+	legado["mejoras"] = {"inventario": 2, "alcance": 1}
+	legado["estilos"] = {"arcade": 1, "museo": 0, "cyber": 2}
+	var migrada = Modelo.new()
+	_comprobar(migrada.validar(legado).is_empty(), "Se acepta el contador entero de XP de la Alpha 0.2")
+	_comprobar(migrada.restaurar(legado) and migrada.datos["xp"] == 60, "Cargar XP antiguo lo recalcula desde las identidades clasificadas")
+	_comprobar(legado["xp"] == 600, "Migrar XP no modifica el diccionario original")
+	_comprobar(migrada.datos["dinero"] == 720 and migrada.datos["mejoras"] == legado["mejoras"] and migrada.datos["estilos"] == legado["estilos"], "La corrección conserva los créditos y compras existentes")
+	var corregido: Dictionary = migrada.exportar()
+	_comprobar(not migrada.registrar_clasificacion("prueba_0") and not migrada.completar_coleccion("ff7_ps1") and migrada.exportar() == corregido, "Cargar y repetir una copia o colección no vuelve a premiar")
+	_comprobar(migrada.restaurar(corregido) and migrada.exportar() == corregido, "Reabrir una partida corregida conserva exactamente la progresión")
+	legado["xp"] = 0
+	_comprobar(migrada.restaurar(legado) and migrada.datos["xp"] == 60, "Las copias históricas también reconstruyen un contador de XP ausente en el prototipo")
+	var corrupto: Dictionary = legado.duplicate(true)
+	corrupto["clasificadas"].append("prueba_0")
+	var antes: Dictionary = migrada.exportar()
+	_comprobar(not migrada.restaurar(corrupto) and migrada.exportar() == antes, "La migración no normaliza ni acepta IDs duplicados corruptos")
+	legado["clasificadas"] = []
+	legado["xp"] = 500
+	_comprobar(migrada.restaurar(legado) and migrada.datos["xp"] == 0, "Las colecciones históricas no crean XP sin copias clasificadas")

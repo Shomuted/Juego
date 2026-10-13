@@ -80,19 +80,80 @@ func generar_campana() -> void:
 	cantidad_inicial = titulos.size() * copias_por_titulo
 	estado.datos["semilla"] = rng.randi_range(1, 2147483647)
 	rng.seed = int(estado.datos["semilla"])
+	var copias: Array[CajaJuego] = []
 	for grupo in range(titulos.size()):
-		var mesa: Array = reglas["mesas_bodega"][grupo]
 		for indice in range(copias_por_titulo):
 			var caja: CajaJuego = escena_caja.instantiate() as CajaJuego
 			var id_copia: String = "camp_%d_%s_%02d" % [estado.datos["semilla"], titulos[grupo], indice]
 			if not caja.configurar(str(titulos[grupo]), rng.randi_range(35, 99), false, id_copia):
 				caja.free()
 				continue
-			# Dos filas separadas sobre cada mesa. No apilar cuerpos físicos.
-			caja.position = Vector3(float(mesa[0]) + (indice % 5 - 2) * 0.66,
-				1.12, float(mesa[1]) + (-0.4 if indice < 5 else 0.4))
-			caja.rotation.y = PI
-			add_child(caja)
+			copias.append(caja)
+	distribuir_copias(copias, int(estado.datos["semilla"]))
+	for caja in copias:
+		add_child(caja)
+
+
+func distribuir_copias(copias: Array[CajaJuego], semilla: int) -> void:
+	# Mezclar identidades ANTES de repartirlas evita preclasificar por título/consola.
+	# Solo cambia las transformaciones: también permite migrar las antiguas mesas.
+	var azar := RandomNumberGenerator.new()
+	azar.seed = semilla
+	var mezcladas: Array[CajaJuego] = copias.duplicate()
+	for i in range(mezcladas.size() - 1, 0, -1):
+		var j: int = azar.randi_range(0, i)
+		var intercambio: CajaJuego = mezcladas[i]
+		mezcladas[i] = mezcladas[j]
+		mezcladas[j] = intercambio
+	var suelo: Dictionary = get_parent().tienda.reglas["suelo"]
+	var centros: Array[Vector2] = []
+	for centro in suelo["montones"]:
+		centros.append(Vector2(float(centro[0]), float(centro[1])) + Vector2(
+			azar.randf_range(-0.35, 0.35), azar.randf_range(-0.35, 0.35)))
+	var por_monton: int = int(suelo["copias_por_monton"])
+	var limites: Array = suelo["limites"]
+	var sueltas: Array[Vector2] = []
+	for i in range(mezcladas.size()):
+		var caja: CajaJuego = mezcladas[i]
+		var punto: Vector2
+		var capa: int = 0
+		if i < centros.size() * por_monton:
+			# Bases desplazadas y giros distintos: montones irregulares, no torres.
+			capa = i % por_monton
+			punto = centros[int(i / por_monton)] + Vector2(
+				azar.randf_range(-0.16, 0.16), azar.randf_range(-0.16, 0.16))
+		else:
+			var encontrada: bool = false
+			for intento in range(256):
+				punto = Vector2(azar.randf_range(limites[0], limites[1]),
+					azar.randf_range(limites[2], limites[3]))
+				# No introducir copias bajo el mostrador, dentro del jugador ni de un montón.
+				if punto.length() < 1.25 or (punto.x > 4.4 and punto.y > -0.8 and punto.y < 2.9):
+					continue
+				var libre: bool = true
+				for anterior in centros + sueltas:
+					if punto.distance_to(anterior) < 0.75:
+						libre = false
+						break
+				if libre:
+					encontrada = true
+					break
+			if not encontrada:
+				# Un stock mayor no puede bloquear la generación buscando huecos.
+				punto = centros[i % centros.size()]
+				capa = por_monton + int(i / centros.size())
+			sueltas.append(punto)
+		# Portadas mayormente hacia arriba, algunas invertidas, todas con giro libre.
+		caja.rotation = Vector3(-PI / 2.0 + azar.randf_range(-0.16, 0.16),
+			azar.randf_range(-PI, PI), azar.randf_range(-0.12, 0.12))
+		if i % 7 == 0:
+			caja.rotation.x += PI
+		# Separación vertical inicial impide interpenetraciones; caen y se apoyan
+		# unas en otras con la física de sus formatos. Ninguna queda congelada.
+		caja.position = Vector3(punto.x, 0.16 + capa * 0.20, punto.y)
+		caja.linear_velocity = Vector3.ZERO
+		caja.angular_velocity = Vector3.ZERO
+		caja.continuous_cd = true
 
 
 func generar_lote(cantidad: int) -> void:

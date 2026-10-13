@@ -37,13 +37,13 @@ func _iniciar_partida() -> void:
 	SaveManager.reanudar_guardado()
 	if SaveManager.hay_partida():
 		if SaveManager.cargar_partida(self):
-			_mensaje("Partida recuperada. TAB: menú de pruebas")
+			_mensaje("Partida recuperada. Busca las copias del suelo y ordénalas. TAB: gestión.")
 		else:
 			push_warning(SaveManager.ultimo_error)
 			SaveManager.guardado_suspendido = true
 			_mensaje("No se pudo recuperar la partida. Conservamos sus archivos: usa TAB para cargar o iniciar una campaña nueva.")
 	else:
-		_mensaje("Nueva partida. TAB: gestión. La bodega está detrás de ti; CLIC recoge y E clasifica.")
+		_mensaje("Nueva partida. TAB: gestión. Busca entre los montones del suelo; CLIC recoge y E coloca. 1 copia ordenada = 1 XP.")
 		var ids: Array = []
 		for caja in $GeneradorJuegos.get_children():
 			if caja is CajaJuego:
@@ -98,12 +98,12 @@ func registrar_clasificacion(id_copia: String) -> void:
 	tienda.registrar_clasificacion(id_copia)
 	if tienda.campana_completa() and not victoria_anunciada:
 		victoria_anunciada = true
-		_mensaje("¡Museo inaugurado! Has recuperado todo el stock de la campaña. Puedes seguir abriendo la tienda y mejorándola.")
+		_mensaje("¡Tienda ordenada! Has recogido y colocado todo el stock original. Puedes seguir abriendo la tienda y mejorándola.")
 
 
 func _al_completar_coleccion(id_juego: String) -> void:
 	if tienda.completar_coleccion(id_juego):
-		_mensaje("Primera colección completada: recompensa y experiencia obtenidas.")
+		_mensaje("¡Colección completa! Sus diez copias ya están ordenadas.")
 		SaveManager.solicitar_guardado()
 
 

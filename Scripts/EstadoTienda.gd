@@ -2,7 +2,7 @@ extends RefCounted
 class_name EstadoTienda
 
 ## Estado serializable de la campaña. No depende de escenas ni de autoloads.
-## El dinero procede de visitas y ayudas por colecciones; las copias se conservan.
+## Cada copia clasificada representa 1 XP; el dinero procede de visitas.
 const RUTA_REGLAS: String = "res://Database/gameplay_config.json"
 const MAX_CONTADOR: int = 1000000000
 const MAX_IDS: int = 10000
@@ -32,11 +32,11 @@ func _cargar_reglas() -> void:
 	# Respaldo para poder informar de una instalación incompleta sin bloquear carga.
 	push_warning("No se pudo leer gameplay_config.json; se usa el balance predeterminado.")
 	reglas = {
-		"duracion_dia": 180, "intervalo_visitas": 12, "experiencia_clasificar": 5,
-		"ticket_base": 4, "recompensa_coleccion": {"dinero": 120, "xp": 50},
+		"duracion_dia": 180, "intervalo_visitas": 12, "experiencia_clasificar": 1,
+		"ticket_base": 4, "recompensa_coleccion": {"dinero": 0, "xp": 0},
 		"mejoras": {
-			"inventario": {"base": 5, "paso": 2, "costos": [80, 160, 260], "xp": [25, 100, 200]},
-			"alcance": {"base": 3.0, "paso": 0.5, "costos": [60, 120, 200], "xp": [25, 75, 150]}
+			"inventario": {"base": 5, "paso": 2, "costos": [80, 160, 260], "xp": [5, 20, 40]},
+			"alcance": {"base": 3.0, "paso": 0.5, "costos": [60, 120, 200], "xp": [5, 15, 30]}
 		},
 		"estilos": {
 			"arcade": {"costos": [60, 120, 180]},
@@ -79,7 +79,7 @@ func registrar_clasificacion(id: String) -> bool:
 	if datos["clasificadas"].size() >= MAX_IDS:
 		return false
 	datos["clasificadas"].append(id)
-	datos["xp"] = mini(MAX_CONTADOR, int(datos["xp"]) + int(reglas["experiencia_clasificar"]))
+	datos["xp"] = datos["clasificadas"].size()
 	return true
 
 
@@ -89,9 +89,6 @@ func completar_coleccion(id: String) -> bool:
 	if datos["completadas"].size() >= MAX_IDS:
 		return false
 	datos["completadas"].append(id)
-	var recompensa: Dictionary = reglas["recompensa_coleccion"]
-	datos["dinero"] = mini(MAX_CONTADOR, int(datos["dinero"]) + int(recompensa["dinero"]))
-	datos["xp"] = mini(MAX_CONTADOR, int(datos["xp"]) + int(recompensa["xp"]))
 	return true
 
 
@@ -252,8 +249,10 @@ func validar(value: Variant) -> String:
 func restaurar(value: Dictionary) -> bool:
 	if not validar(value).is_empty():
 		return false
-	# Restaurar nunca vuelve a conceder XP, premios ni ingresos.
+	# La Alpha 0.2 concedía XP adicionales por copias y colecciones. Los IDs
+	# históricos permiten aplicar 1 XP por copia sin repetir eventos ni ingresos.
 	datos = value.duplicate(true)
+	datos["xp"] = datos["clasificadas"].size()
 	return true
 
 

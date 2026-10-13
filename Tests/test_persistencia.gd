@@ -97,6 +97,8 @@ func _comprobar_fixture(escena: Node, condicion_inventario: int, descripcion: St
 	_comprobar(estanteria.exhibicion.get_node("Posicion_00").get_meta("id_copia") == "estante_1"
 		and estanteria.exhibicion.get_node("Posicion_01").get_meta("id_copia") == "estante_2",
 		descripcion + ": representación y estado lógico coinciden")
+	_comprobar(estado["tienda"]["xp"] == 2 and estado["tienda"]["clasificadas"].size() == 2,
+		descripcion + ": dos copias exhibidas conservan exactamente 2 XP")
 
 
 func _escribir(ruta: String, texto: String) -> void:
@@ -126,8 +128,8 @@ func _ejecutar() -> void:
 	if lectura:
 		_comprobar_fixture(escena, 93, "Reapertura en otro proceso Godot")
 		_comprobar(not save_manager.guardado_suspendido, "La reapertura deja el guardado habilitado")
-		_comprobar(escena.tienda.datos["dinero"] == 321 and escena.tienda.datos["xp"] == 120,
-			"Dinero y experiencia sobreviven a cerrar el proceso")
+		_comprobar(escena.tienda.datos["dinero"] == 321 and escena.tienda.datos["xp"] == 2,
+			"Reabrir una Alpha 0.2 conserva dinero y corrige la XP a sus dos copias exhibidas")
 		_comprobar(escena.get_node("Player").obtener_capacidad() == 7 and is_equal_approx(escena.tienda.alcance(), 3.5),
 			"Las mejoras sobreviven a cerrar el proceso")
 		_comprobar(escena.tienda.datos["estilos"]["arcade"] == 1,
@@ -144,6 +146,8 @@ func _ejecutar() -> void:
 	var estanteria: EstanteriaJuegos = escena.get_node("Estanterias/EstanteriaPS1")
 	_comprobar(estanteria.guardar_juego(_copia("ff7_ps1", "estante_1", 61)), "Primera copia colocada")
 	_comprobar(estanteria.guardar_juego(_copia("ff7_ps1", "estante_2", 89)), "Segunda copia colocada")
+	escena.registrar_clasificacion("estante_1")
+	escena.registrar_clasificacion("estante_2")
 	var caja: CajaJuego = load("res://caja_juego.tscn").instantiate()
 	_comprobar(caja.configurar("gt4_ps2", 94, true, "bodega_1"), "Copia física configurada")
 	caja.position = Vector3(1.0, 2.0, 3.0)
@@ -157,6 +161,8 @@ func _ejecutar() -> void:
 	_comprobar(FileAccess.file_exists(save_manager.RUTA), "Existe archivo principal")
 	jugador.inventario[0]["condicion"] = 93
 	if escritura:
+		# Fixture de la Alpha 0.2 anterior: compras y saldo ya existentes, con
+		# la XP antigua inflada. El segundo proceso debe migrar sin premiar.
 		escena.tienda.datos["dinero"] = 321
 		escena.tienda.datos["xp"] = 120
 		escena.tienda.datos["mejoras"] = {"inventario": 1, "alcance": 1}
@@ -167,6 +173,9 @@ func _ejecutar() -> void:
 	var respaldo: Dictionary = save_manager._leer_estado(save_manager.RUTA_RESPALDO)
 	_comprobar(respaldo["inventario"][0]["condicion"] == 72, "Respaldo conserva el estado anterior")
 	if escritura:
+		var anterior: Dictionary = save_manager._leer_estado(save_manager.RUTA)
+		anterior["version"] = 2
+		_escribir(save_manager.RUTA, JSON.stringify(anterior))
 		print("REAPERTURA ESCRITURA: %d pruebas, %d fallos" % [pruebas, fallos])
 		quit(1 if fallos > 0 else 0)
 		return

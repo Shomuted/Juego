@@ -49,11 +49,11 @@ func construir(principal: Node) -> void:
 	_texto(tienda, "IDENTIDAD DEL MUSEO  ·  ESTILOS COMBINABLES", 11, CORAL)
 	for tipo in ["arcade", "museo", "cyber"]:
 		_crear_compra(tienda, "estilos", tipo)
-	_texto(tienda, "La experiencia es un requisito acumulado; las compras consumen dinero. Cada estilo tiene tres niveles y aumenta el ingreso por entrada.", 11, APAGADO)
+	_texto(tienda, "Cada copia colocada por primera vez en su estantería suma 1 XP. La experiencia se conserva al comprar; las compras consumen dinero de las visitas. Cada estilo tiene tres niveles y aumenta el ingreso por entrada.", 11, APAGADO)
 
 	var archivo: VBoxContainer = _pagina(pestanas, "Colecciones")
-	ficha_coleccion = _texto(archivo, "EL ARCHIVO  ·  0 / 60 COPIAS", 15, MENTA)
-	_texto(archivo, "Seis colecciones, diez ejemplares por título. Cada copia conserva su condición y su edición. Completa las seis para inaugurar el museo.", 12, APAGADO)
+	ficha_coleccion = _texto(archivo, "ORDENADOS  ·  0 / 60 COPIAS", 15, MENTA)
+	_texto(archivo, "Los juegos están mezclados y amontonados por el suelo de la tienda. Encuentra y ordena diez copias de cada título para completar seis colecciones. Cada copia conserva su condición y su edición.", 12, APAGADO)
 	for id_juego in TITULOS:
 		var marco: PanelContainer = PanelContainer.new()
 		marco.add_theme_stylebox_override("panel", _estilo(Color("1e3340"), 10))
@@ -78,13 +78,13 @@ func construir(principal: Node) -> void:
 		colecciones.append({"id": id_juego, "cuenta": cuenta, "calidad": calidad, "barra": barra})
 
 	var ayuda: VBoxContainer = _pagina(pestanas, "Ayuda")
-	_texto(ayuda, "TU TIENDA ES UN LUGAR PARA PRESERVAR", 15, MENTA)
-	_texto(ayuda, "Recupera una colección olvidada y convierte la tienda en un museo de videojuegos físicos. Los juegos permanecen contigo: tus ingresos vienen de las visitas.", 13, CREMA)
-	_ayuda(ayuda, "01  RECUPERAR", "Entra en la bodega. Apunta a una caja y pulsa CLIC. Su plataforma, condición y edición viajan con ella en tu inventario.")
-	_ayuda(ayuda, "02  CLASIFICAR", "Acércate a la estantería de su plataforma y pulsa E. Cada título tiene una fila de diez copias. Clasificar otorga experiencia; completar una colección entrega una recompensa.")
+	_texto(ayuda, "DEL DESORDEN A LA COLECCIÓN", 15, MENTA)
+	_texto(ayuda, "La tienda empieza con juegos tirados y amontonados por todas partes. Busca entre el desorden, recoge las copias y llévalas a su estantería. Los juegos permanecen contigo: tus ingresos vienen de las visitas.", 13, CREMA)
+	_ayuda(ayuda, "01  BUSCAR Y RECOGER", "Explora el suelo de la tienda y sus montones de juegos mezclados. Apunta a una copia y pulsa CLIC. Su plataforma, condición y edición viajan con ella en tu inventario.")
+	_ayuda(ayuda, "02  ORDENAR", "Acércate a la estantería de su plataforma y pulsa E. Cada título tiene una fila de diez copias. Cada copia colocada por primera vez aporta exactamente 1 XP. Completar la fila registra la colección, sin premios adicionales de XP o dinero.")
 	_ayuda(ayuda, "03  ABRIR LAS PUERTAS", "Acércate al mostrador y pulsa R. El público visita la exposición durante la jornada. La colección y su calidad aportan valor a las entradas. Puedes seguir clasificando durante las visitas.")
 	_ayuda(ayuda, "04  HACER CRECER EL ARCHIVO", "Usa la recaudación en herramientas y decoración desde la pestaña Tienda. Combina Arcade, Museo y Cyber. Al acabar la jornada, prepara la siguiente apertura desde el mostrador.")
-	_ayuda(ayuda, "05  INAUGURAR EL MUSEO", "Preserva las 60 copias y completa las seis colecciones. La campaña termina con la inauguración, y puedes continuar recibiendo visitantes y mejorando tu museo.")
+	_ayuda(ayuda, "05  COMPLETAR LAS COLECCIONES", "Despeja el suelo llevando las 60 copias a sus estanterías. Completa las seis colecciones para terminar de ordenar la tienda. Después puedes continuar recibiendo visitantes y mejorando el museo.")
 	_texto(ayuda, "CONTROLES", 11, CORAL)
 	_texto(ayuda, "WASD · caminar    Ratón · mirar    Espacio · saltar\nCLIC · recoger    E · clasificar    R · mostrador\nTAB · gestión y pausa    ESC · cerrar el menú\nF6 · guardar    F9 · cargar el último guardado", 12, CREMA)
 	_texto(ayuda, "La partida se guarda automáticamente. Cargar recupera el último guardado; reiniciar requiere confirmación y borra el progreso.", 11, APAGADO)
@@ -248,7 +248,7 @@ func actualizar() -> void:
 		(coleccion["cuenta"] as Label).text = "%d / 10%s" % [cantidad, "  COMPLETA" if cantidad >= 10 else ""]
 		(coleccion["barra"] as ProgressBar).value = cantidad
 		(coleccion["calidad"] as Label).text = "Calidad media %.1f / 10  ·  %d ediciones especiales" % [calidad_total / cantidad, especiales] if cantidad > 0 else "Todavía no hay ejemplares exhibidos."
-	ficha_coleccion.text = "%d / 60 COPIAS PRESERVADAS   ·   %d / 6 COLECCIONES" % [preservadas, completas]
+	ficha_coleccion.text = "%d / 60 COPIAS ORDENADAS   ·   %d / 6 COLECCIONES" % [preservadas, completas]
 
 
 func _comprar(categoria: String, tipo: String) -> void:

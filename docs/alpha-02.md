@@ -1,5 +1,9 @@
 # Alpha 0.2 — Campaña y gestión de la tienda
 
+> Documento histórico de Alpha 0.2. La distribución en mesas y sus recompensas
+> fueron corregidas tras la prueba del director. Consultar [Alpha 0.2.1](alpha-021.md)
+> para las reglas vigentes.
+
 ## Flujo jugable
 
 Nueva campaña → recuperar en bodega → llevar un inventario limitado → clasificar
